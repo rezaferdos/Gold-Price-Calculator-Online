@@ -7,21 +7,51 @@ let Mazane, Wight, Sood;
 stripeloginForm.addEventListener('submit', SubmitForm);
 
 
-// Functions
-function isValidDecimal(decimalValue) {
-    const regex = /^-?\d+(\.\d+)?$/;
-      if (typeof decimalValue !== 'string') {
-      return false;
+document.querySelector('#Mazane').addEventListener('keyup', function(event) {
+    const value = event.target.value.replace(/,/g, ''); // Remove existing commas
+    const number = Number(value);
+  
+    if (!isNaN(number)) {
+      const formattedValue = number.toLocaleString('en-US');
+      event.target.value = formattedValue;
+  
+      // Optional: Adjust cursor position (see explanation below)
+    } else {
+      event.target.value = ''; // Clear non-numeric input
     }
+  });
+
+
+// Functions
+// function isValidDecimal(decimalValue) {
+//     const regex = /^-?\d+(\.\d+)?$/;
+//       if (typeof decimalValue !== 'string') {
+//       return false;
+//     }
+//     return regex.test(decimalValue);
+// }
+function isValidDecimal(decimalValue) {
+    // Regex to validate the format
+    const regex = /^\d{1,3}(,\d{3})*(\.\d+)?$/;
+
+    // Ensure the input is a string
+    if (typeof decimalValue !== 'string') {
+        // let str = decimalValue.toString();
+        // return regex.test(str);
+        return false;
+    }
+    // Test the value against the regex
     return regex.test(decimalValue);
 }
+
 
 function SubmitForm(e) {
     e.preventDefault();
     // Get Value Of Form    
-    Mazane = document.querySelector('#Mazane').value;
+    Mazane = document.querySelector('#Mazane').value.replace(/,/g, '');
     Wight = document.querySelector('#Wight').value;
     Sood = document.querySelector('#Sood').value;
+    console.log(`Mazane: ${Mazane}, Wight: ${Wight}, Sood: ${Sood}`); 
     // Validate 
     if (ValidateFields(Sood, Wight, Mazane)) {
         const totalPrice = formatNumberWithSlashes(roundToString(productTotalPrice(Wight, Sood, Mazane)));
@@ -42,6 +72,7 @@ function SubmitForm(e) {
 }
 
 function ValidateFields(Sood, Wight, Mazane) {
+    console.log(isValidDecimal(Mazane));
     if (!isValidDecimal(Sood)) 
         {
             swal({
@@ -63,7 +94,7 @@ function ValidateFields(Sood, Wight, Mazane) {
                 });
                 return false;
         }
-        if (!isValidDecimal(Mazane)) 
+        if (isValidDecimal(Mazane)) 
         {
             swal({
                 title: "خطا",
